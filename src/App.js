@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
+import axios from "axios";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  state = { selectedFile: null };
+
+  fileChangedHandler = event => {
+    this.setState({ selectedFile: event.target.files[0] });
+  };
+
+  fileUploadHandler = () => {
+    const formData = new FormData();
+    formData.append(
+      "myFile",
+      this.state.selectedFile,
+      this.state.selectedFile.name
+    );
+    axios.post("my-domain.com/file-upload", formData, {
+      onUploadProgress: progressEvent => {
+        console.log(progressEvent.loaded / progressEvent.total);
+      }
+    });
+  };
+  render() {
+    return (
+      <div className="App">
+        <input type="file" onChange={this.fileChangedHandler} />
+        <button onClick={this.uploadHandler}>Upload!</button>
+      </div>
+    );
+  }
 }
 
 export default App;
